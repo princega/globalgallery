@@ -10,31 +10,29 @@ let count = 0;
 function getRandom(seed, start, end){
     seed = seed *(seed % 2 == 0 ? 13 : 5);
     seed = seed /(seed % 3 == 0 ? 3 : 2);
-    return ((seed %(end - start)) + start)
+    return Math.floor(((seed %(end - start)) + start))
+}
+
+async function UrlExits(string){
+    const response = await fetch(string, { method: 'HEAD'});
+
+    if (response.ok){
+        const ImageContainer = document.getElementById('image-container');
+        const image = new Image();
+
+        image.onload = function(){
+            image.width=300;
+            image.height=300;
+            ImageContainer.appendChild(image);
+        };
+        image.src = string;
+        ++count;
+    }
 }
 
 while (count < 4){
-    let b = Math.floor(getRandom(seed, start, end));
+    let b = getRandom(seed, start, end);
     let string = "https://images.pexels.com/photos/"+b+"/pexels-photo-"+b+".jpeg";
     seed = getRandom(seed, start, end);
-
-    function UrlExits(string){
-        var http = new XMLHttpRequest();
-        http.open('HEAD',string,false);
-        http.send();
-
-        if (http.status != 404){
-            const ImageContainer = document.getElementById('image-container');
-            const image = new Image();
-
-            image.onload = function(){
-                image.width=300;
-                image.height=300;
-                ImageContainer.appendChild(image);
-            };
-            image.src = string;
-            ++count;
-        }
-    }
-    UrlExits(string);
+    await UrlExits(string);
 }
